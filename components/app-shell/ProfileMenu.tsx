@@ -6,6 +6,7 @@ import { Moon, Settings, Sun, LogOut } from "lucide-react";
 import { useTheme } from "next-themes";
 import { appConfig } from "@/lib/app-config";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const MOCK_AUTH_KEY = "mock-auth";
 
@@ -15,9 +16,11 @@ export function ProfileMenu() {
   const isDark = useMemo(() => resolvedTheme === "dark", [resolvedTheme]);
 
   const [open, setOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const firstItemRef = useRef<HTMLButtonElement | null>(null);
+  const cancelButtonRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     if (!open) {
@@ -37,6 +40,26 @@ export function ProfileMenu() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, [open]);
 
+  useEffect(() => {
+    if (confirmOpen) {
+      cancelButtonRef.current?.focus();
+    }
+  }, [confirmOpen]);
+
+  useEffect(() => {
+    if (!confirmOpen) {
+      return;
+    }
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setConfirmOpen(false);
+        buttonRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [confirmOpen]);
+
   const initials = appConfig.name
     .split(" ")
     .map((part) => part[0])
@@ -45,6 +68,7 @@ export function ProfileMenu() {
     .toUpperCase();
 
   const handleLogout = () => {
+    setConfirmOpen(false);
     localStorage.removeItem(MOCK_AUTH_KEY);
     router.replace("/login");
   };
@@ -60,6 +84,8 @@ export function ProfileMenu() {
     "flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
   const themeItemClass = (value: "light" | "dark" | "system") =>
     cn(menuItemClass, theme === value ? "bg-accent text-accent-foreground" : "text-foreground");
+  const logoutItemClass =
+    "flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400";
 
   return (
     <div className="relative" onKeyDown={handleKeyDown}>
@@ -139,11 +165,55 @@ export function ProfileMenu() {
             System
           </button>
         </div>
-        <button type="button" className={menuItemClass} onClick={handleLogout} role="menuitem">
+        <button
+          type="button"
+          className={logoutItemClass}
+          onClick={() => {
+            setOpen(false);
+            setConfirmOpen(true);
+          }}
+          role="menuitem"
+        >
           <LogOut className="h-4 w-4" />
           Logout
         </button>
       </div>
+      {confirmOpen ? (
+        <div className="absolute right-0 top-0 z-30">
+          <div
+            className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm"
+            aria-hidden="true"
+            onClick={() => setConfirmOpen(false)}
+          />
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="logout-title"
+            aria-describedby="logout-description"
+            className="fixed left-1/2 top-1/2 z-40 w-full max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-lg border border-border bg-background p-5 shadow-xl"
+          >
+            <h2 id="logout-title" className="text-base font-semibold text-foreground">
+              Log out?
+            </h2>
+            <p id="logout-description" className="mt-2 text-sm text-muted-foreground">
+              Are you sure you want to log out?
+            </p>
+            <div className="mt-6 flex justify-end gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setConfirmOpen(false)}
+                ref={cancelButtonRef}
+              >
+                Cancel
+              </Button>
+              <Button type="button" variant="destructive" onClick={handleLogout}>
+                Log out
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
