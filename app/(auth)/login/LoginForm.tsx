@@ -1,44 +1,47 @@
 "use client";
 
-import { useFormState } from "react-dom";
-import { login } from "./actions";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const initialState: { error?: string } = {};
+const MOCK_AUTH_KEY = "mock-auth";
 
 export default function LoginForm() {
-  const [state, formAction] = useFormState(login, initialState);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    if (localStorage.getItem(MOCK_AUTH_KEY) === "true") {
+      router.replace("/");
+    }
+  }, [router]);
+
+  const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    localStorage.setItem(MOCK_AUTH_KEY, "true");
+    router.replace("/");
+  };
 
   return (
-    <form action={formAction} className="space-y-4">
+    <form className="space-y-4" onSubmit={handleLogin}>
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
-        <Input
-          id="email"
-          name="email"
-          type="email"
-          placeholder="you@example.com"
-          autoComplete="email"
-          required
-        />
+        <Input id="email" name="email" type="email" placeholder="you@example.com" />
       </div>
       <div className="space-y-2">
         <Label htmlFor="password">Password</Label>
-        <Input
-          id="password"
-          name="password"
-          type="password"
-          placeholder="••••••••"
-          autoComplete="current-password"
-          required
-        />
+        <Input id="password" name="password" type="password" placeholder="••••••••" />
       </div>
-      {state?.error ? <p className="text-sm text-destructive">{state.error}</p> : null}
       <Button type="submit" className="w-full">
-        Sign In
+        Login
       </Button>
+      <p className="text-xs text-muted-foreground">
+        Mock login only: any credentials will continue to the app.
+      </p>
     </form>
   );
 }

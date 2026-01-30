@@ -1,24 +1,20 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { requireUser } from "@/lib/session";
 
-export default async function HomePage() {
-  const user = await requireUser();
-
+export default function HomePage() {
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-6">
       <Card>
         <CardHeader>
           <CardTitle>Welcome</CardTitle>
-          <CardDescription>Authenticated home page</CardDescription>
+          <CardDescription>Frontend-only home page</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
           <p className="text-sm text-muted-foreground">
-            Signed in as{" "}
-            <span className="font-medium text-foreground">{user.email ?? "Unknown user"}</span>.
+            Mock authentication is enabled to keep the UI flow intact without a backend.
           </p>
           <p className="text-sm text-muted-foreground">
-            Use this starter as a base for building production-grade features. The shell layout,
-            authentication, and database wiring are ready to go.
+            Use this starter as a base for building production-ready interfaces. Swap the mock
+            guard with real auth when you are ready.
           </p>
         </CardContent>
       </Card>

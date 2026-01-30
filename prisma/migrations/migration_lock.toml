@@ -1,2 +1,0 @@
-# This file ensures Prisma migrations run against the correct provider.
-provider = "postgresql"

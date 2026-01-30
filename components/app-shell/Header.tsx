@@ -1,31 +1,27 @@
-import { signOut } from "@/lib/auth";
+"use client";
+
+import { useRouter } from "next/navigation";
+import { AppLogo } from "@/components/app-shell/AppLogo";
 import { Button } from "@/components/ui/button";
 
-type HeaderProps = {
-  user: {
-    email: string | null | undefined;
-  };
-};
+const MOCK_AUTH_KEY = "mock-auth";
 
-export async function Header({ user }: HeaderProps) {
-  const signOutAction = async () => {
-    "use server";
-    await signOut({ redirectTo: "/login" });
+export function Header() {
+  const router = useRouter();
+
+  const handleLogout = () => {
+    localStorage.removeItem(MOCK_AUTH_KEY);
+    router.replace("/login");
   };
 
   return (
     <header className="flex items-center justify-between border-b border-border px-6 py-4">
-      <div>
-        <p className="text-lg font-semibold">App Template</p>
-        <p className="text-sm text-muted-foreground">Production-ready Next.js starter</p>
-      </div>
+      <AppLogo showTagline />
       <div className="flex items-center gap-4">
-        <span className="text-sm text-muted-foreground">{user.email ?? "Unknown user"}</span>
-        <form action={signOutAction}>
-          <Button type="submit" size="sm" variant="outline">
-            Logout
-          </Button>
-        </form>
+        <span className="text-sm text-muted-foreground">Mock session</span>
+        <Button type="button" size="sm" variant="outline" onClick={handleLogout}>
+          Logout
+        </Button>
       </div>
     </header>
   );
