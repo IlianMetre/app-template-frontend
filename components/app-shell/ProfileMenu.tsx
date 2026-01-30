@@ -11,7 +11,7 @@ const MOCK_AUTH_KEY = "mock-auth";
 
 export function ProfileMenu() {
   const router = useRouter();
-  const { resolvedTheme, setTheme } = useTheme();
+  const { theme, resolvedTheme, setTheme } = useTheme();
   const isDark = useMemo(() => resolvedTheme === "dark", [resolvedTheme]);
 
   const [open, setOpen] = useState(false);
@@ -49,10 +49,6 @@ export function ProfileMenu() {
     router.replace("/login");
   };
 
-  const handleToggleTheme = () => {
-    setTheme(isDark ? "light" : "dark");
-  };
-
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Escape") {
       setOpen(false);
@@ -62,6 +58,8 @@ export function ProfileMenu() {
 
   const menuItemClass =
     "flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+  const themeItemClass = (value: "light" | "dark" | "system") =>
+    cn(menuItemClass, theme === value ? "bg-accent text-accent-foreground" : "text-foreground");
 
   return (
     <div className="relative" onKeyDown={handleKeyDown}>
@@ -80,7 +78,7 @@ export function ProfileMenu() {
         role="menu"
         aria-hidden={!open}
         className={cn(
-          "absolute right-0 z-20 mt-2 w-56 origin-top-right rounded-lg border border-border bg-popover p-2 text-popover-foreground shadow-lg transition-all duration-200",
+          "absolute right-0 z-20 mt-2 w-56 origin-top-right rounded-lg border border-border bg-background p-2 text-foreground shadow-lg transition-all duration-200",
           open ? "scale-100 opacity-100" : "pointer-events-none scale-95 opacity-0"
         )}
       >
@@ -98,23 +96,49 @@ export function ProfileMenu() {
           <Settings className="h-4 w-4" />
           Settings
         </button>
-        <button type="button" className={menuItemClass} onClick={handleToggleTheme} role="menuitem">
-          <span className="relative h-4 w-4">
-            <Sun
-              className={cn(
-                "absolute left-0 top-0 h-4 w-4 transition-all duration-300",
-                isDark ? "rotate-90 scale-0 opacity-0" : "rotate-0 scale-100 opacity-100"
-              )}
-            />
-            <Moon
-              className={cn(
-                "absolute left-0 top-0 h-4 w-4 transition-all duration-300",
-                isDark ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-0 opacity-0"
-              )}
-            />
-          </span>
-          Toggle Dark Mode
-        </button>
+        <div className="mt-1 border-t border-border pt-2">
+          <p className="px-3 pb-1 text-xs font-medium uppercase text-muted-foreground">Theme</p>
+          <button
+            type="button"
+            className={themeItemClass("light")}
+            onClick={() => setTheme("light")}
+            role="menuitem"
+          >
+            <Sun className="h-4 w-4" />
+            Light
+          </button>
+          <button
+            type="button"
+            className={themeItemClass("dark")}
+            onClick={() => setTheme("dark")}
+            role="menuitem"
+          >
+            <Moon className="h-4 w-4" />
+            Dark
+          </button>
+          <button
+            type="button"
+            className={themeItemClass("system")}
+            onClick={() => setTheme("system")}
+            role="menuitem"
+          >
+            <span className="relative h-4 w-4">
+              <Sun
+                className={cn(
+                  "absolute left-0 top-0 h-4 w-4 transition-all duration-300",
+                  isDark ? "rotate-90 scale-0 opacity-0" : "rotate-0 scale-100 opacity-100"
+                )}
+              />
+              <Moon
+                className={cn(
+                  "absolute left-0 top-0 h-4 w-4 transition-all duration-300",
+                  isDark ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-0 opacity-0"
+                )}
+              />
+            </span>
+            System
+          </button>
+        </div>
         <button type="button" className={menuItemClass} onClick={handleLogout} role="menuitem">
           <LogOut className="h-4 w-4" />
           Logout
