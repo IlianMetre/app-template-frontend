@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { appConfig } from "@/lib/app-config";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 
@@ -18,8 +19,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={cn("min-h-screen bg-background text-foreground", inter.className)}>
-        {children}
+      <body
+        className={cn(
+          "min-h-screen bg-background text-foreground transition-colors duration-300",
+          inter.className
+        )}
+      >
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );
