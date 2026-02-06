@@ -190,7 +190,7 @@ export function ProfileMenu() {
             aria-modal="true"
             aria-labelledby="logout-title"
             aria-describedby="logout-description"
-            className="fixed left-1/2 top-1/2 z-40 w-full max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-lg border border-border bg-background p-5 shadow-xl"
+            className="fixed left-1/2 top-1/2 z-40 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-lg border border-border bg-background p-5 shadow-xl"
           >
             <h2 id="logout-title" className="text-base font-semibold text-foreground">
               Log out?

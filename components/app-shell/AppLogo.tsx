@@ -16,7 +16,7 @@ export function AppLogo({ className, showTagline = false }: AppLogoProps) {
       <div className="leading-tight">
         <p className="text-base font-semibold">{appConfig.name}</p>
         {showTagline && appConfig.tagline ? (
-          <p className="text-xs text-muted-foreground">{appConfig.tagline}</p>
+          <p className="hidden text-xs text-muted-foreground sm:block">{appConfig.tagline}</p>
         ) : null}
       </div>
     </div>
