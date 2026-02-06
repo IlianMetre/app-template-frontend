@@ -15,6 +15,7 @@ export function ProfileMenu() {
   const { theme, resolvedTheme, setTheme } = useTheme();
   const isDark = useMemo(() => resolvedTheme === "dark", [resolvedTheme]);
 
+  const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -60,6 +61,10 @@ export function ProfileMenu() {
     return () => document.removeEventListener("keydown", handleKey);
   }, [confirmOpen]);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const initials = appConfig.name
     .split(" ")
     .map((part) => part[0])
@@ -83,7 +88,7 @@ export function ProfileMenu() {
   const menuItemClass =
     "flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
   const themeItemClass = (value: "light" | "dark" | "system") =>
-    cn(menuItemClass, theme === value ? "bg-accent text-accent-foreground" : "text-foreground");
+    cn(menuItemClass, mounted && theme === value ? "bg-accent text-accent-foreground" : "text-foreground");
   const logoutItemClass =
     "flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400";
 
@@ -152,13 +157,13 @@ export function ProfileMenu() {
               <Sun
                 className={cn(
                   "absolute left-0 top-0 h-4 w-4 transition-all duration-300",
-                  isDark ? "rotate-90 scale-0 opacity-0" : "rotate-0 scale-100 opacity-100"
+                  mounted && isDark ? "rotate-90 scale-0 opacity-0" : "rotate-0 scale-100 opacity-100"
                 )}
               />
               <Moon
                 className={cn(
                   "absolute left-0 top-0 h-4 w-4 transition-all duration-300",
-                  isDark ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-0 opacity-0"
+                  mounted && isDark ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-0 opacity-0"
                 )}
               />
             </span>

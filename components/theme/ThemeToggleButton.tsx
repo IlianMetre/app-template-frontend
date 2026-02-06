@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,12 +12,32 @@ type ThemeToggleButtonProps = {
 };
 
 export function ThemeToggleButton({ className, showLabel = true }: ThemeToggleButtonProps) {
+  const [mounted, setMounted] = useState(false);
   const { resolvedTheme, setTheme } = useTheme();
   const isDark = useMemo(() => resolvedTheme === "dark", [resolvedTheme]);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleToggle = () => {
     setTheme(isDark ? "light" : "dark");
   };
+
+  if (!mounted) {
+    return (
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        disabled
+        className={cn("gap-2 transition-all", className)}
+      >
+        <span className="relative h-4 w-4" />
+        {showLabel ? <span>&nbsp;</span> : null}
+      </Button>
+    );
+  }
 
   return (
     <Button
